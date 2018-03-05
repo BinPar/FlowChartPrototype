@@ -29,23 +29,7 @@ const getMaxWidth = (child, options) => {
   return total;
 };
 
-
-const getTotalWidth = (child, options) => {
-  let total = 1;
-  if (options && options.length) {
-    total -= 1;
-    options.forEach((option) => {
-      total += getMaxWidth(option.child, option.options);
-    });
-  }
-  if (child) {
-    total += getTotalWidth(child.child, child.options) - 1;
-  }
-  return total;
-};
-
 export default {
   getMaxDepth,
   getMaxWidth,
-  getTotalWidth,
 };
