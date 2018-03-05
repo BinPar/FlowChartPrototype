@@ -1,0 +1,23 @@
+{
+  "presets": [
+    [
+      "env",
+      "react"
+    ]
+  ],
+  "plugins": [
+    ["transform-define", "./env-config.js"],
+    [
+      "transform-object-rest-spread",
+      {
+        "useBuiltIns": true
+      }
+    ],
+    "babel-plugin-inline-import",
+    "transform-runtime",
+    "transform-exponentiation-operator",
+    [
+      "transform-react-jsx"
+    ]
+  ]
+}
