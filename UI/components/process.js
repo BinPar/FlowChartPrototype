@@ -5,7 +5,15 @@ import flowChartTools from '../tools/flowChartTools';
 const { getMaxDepth, getMaxWidth } = flowChartTools;
 
 const getOptionsLines = (options, margin, childActive) => {
-  const totalWidth = getMaxWidth(null, options) * 210;
+  let requiredWidth = 0;
+  options.forEach((option, i) => {
+    requiredWidth +=
+      i === 0 || i === options.length - 1
+        ? getMaxWidth(option, null) / 2
+        : getMaxWidth(option, null);
+  });
+
+  const totalWidth = requiredWidth * 210;
   let currentX = totalWidth / -2;
   return [
     <path
@@ -15,13 +23,16 @@ const getOptionsLines = (options, margin, childActive) => {
       d={`m ${currentX} 85 h ${totalWidth}`}
     />,
     ...options
-      .map((option) => {
+      .map((option, i) => {
         const maxDepth = getMaxDepth({ child: option.child, options: option.options });
         let subMargin = margin;
         subMargin -= maxDepth * 110;
         subMargin += 25;
+        const delta = i === 0 ? 0 : 105;
+        currentX += getMaxWidth(option.child, option.options) * delta;
         const xPosition = currentX;
-        currentX += getMaxWidth(option.child, option.options) * 210;
+        
+        currentX += getMaxWidth(option.child, option.options) * 105;
 
         let verticalEnd = margin - subMargin;
         verticalEnd += 85;

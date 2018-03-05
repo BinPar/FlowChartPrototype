@@ -62,12 +62,24 @@ const testData = {
               },
               {
                 text: 'No',
+                child: {
+                  text: 'Información adicional',
+                },
               },
             ],
           },
         },
         {
           text: 'Lo tiene',
+          child: {
+            text: 'Es una pena',
+            child: {
+              text: 'Cross selling',
+              child: {
+                text: 'Up selling',
+              },
+            },
+          },
         },
       ],
       child: {

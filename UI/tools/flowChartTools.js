@@ -17,8 +17,8 @@ const getMaxDepth = ({ child, options }) => {
 
 const getMaxWidth = (child, options) => {
   let total = 1;
-  if (options && options.length) {
-    total -= 2;
+  if (options && options.length > 1) {
+    total -= 1;
     options.forEach((option) => {
       total += getMaxWidth(option.child, option.options);
     });
