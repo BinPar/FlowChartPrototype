@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="60px" viewBox="0 0 200 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49 (51002) - http://www.bohemiancoding.com/sketch -->
+    <title>Paso</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M10,0 L190,-5.5067062e-14 C195.522847,-5.60815926e-14 200,4.4771525 200,10 L200,40 L200,40 C200,45.5228475 195.522847,50 190,50 L110,50 L100,60 L90,50 L10,50 C4.4771525,50 -2.32124842e-15,45.5228475 -2.99760217e-15,40 L-2.99760217e-15,10 C-3.67395592e-15,4.4771525 4.4771525,2.79088747e-15 10,1.77635684e-15 Z" id="path-1"></path>
+    </defs>
+    <g id="Paso" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Rectangle">
+            <use fill="#FBFBFB" fill-rule="evenodd" xlink:href="#path-1"></use>
+            <path stroke="#C2C2C2" stroke-width="1" d="M100,59.2928932 L109.792893,49.5 L190,49.5 C195.246705,49.5 199.5,45.2467051 199.5,40 L199.5,10 C199.5,4.75329488 195.246705,0.5 190,0.5 L10,0.5 C4.75329488,0.5 0.5,4.75329488 0.5,10 L0.5,40 C0.5,45.2467051 4.75329488,49.5 10,49.5 L90.2071068,49.5 L100,59.2928932 Z"></path>
+        </g>
+        <text id="Texto" font-family="Roboto-Light, Roboto" font-size="12" font-weight="300" fill="#4A4A4A">
+            <tspan x="57.6777344" y="23">Type something</tspan>
+        </text>
+    </g>
+</svg>

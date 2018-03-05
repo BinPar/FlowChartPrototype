@@ -6,7 +6,6 @@
     ]
   ],
   "plugins": [
-    ["transform-define", "./env-config.js"],
     [
       "transform-object-rest-spread",
       {
