@@ -30,7 +30,7 @@ class Process extends React.Component {
     this.setState({ hover: false });
   }
   renderShape() {
-    const { active, focused, last, condition, script } = this.props;
+    const { active, focused, last, first, condition, script } = this.props;
     let stroke = '#e2e2e2';
     if (active) {
       stroke = '#4a90e2';
@@ -56,6 +56,17 @@ class Process extends React.Component {
           strokeWidth={1}
           stroke={stroke}
           d="m -75 0 h 150 c 0 0, 25 0, 25 25 c 0 0, 0 25, -25 25 h -150 c 0 0, -25 0, -25 -25 c 0 0, 0 -25, 25 -25"
+        />
+      );
+    }
+    if (first) {
+      return (
+        <path
+          style={style}
+          fill={fill}
+          strokeWidth={1}
+          stroke={stroke}
+          d="m -75 0 h 150 c 0 0, 25 0, 25 25 c 0 0, 0 25, -25 25 h -65 l -10 10 l -10 -10 h -65 c 0 0, -25 0, -25 -25 c 0 0, 0 -25, 25 -25"
         />
       );
     }
