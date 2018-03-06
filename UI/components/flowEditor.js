@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Process from './process';
+import flowChartTools from '../tools/flowChartTools';
 
+const { recalculateParentNodes, selectNode } = flowChartTools;
 export default class FlowEditor extends React.Component {
   constructor(props) {
     super(props);
@@ -9,11 +11,20 @@ export default class FlowEditor extends React.Component {
       width: 0,
       height: 0,
       x: 0,
+      flowData: recalculateParentNodes(this.props.flowData),
     };
+    global.flowData = recalculateParentNodes(this.props.flowData);
+    this.onSelectNode = this.onSelectNode.bind(this);
   }
 
   componentDidMount() {
     this.recalculateChartSize();
+  }
+
+  onSelectNode(node) {
+    this.setState({
+      flowData: selectNode(this.state.flowData, node),
+    });
   }
 
   recalculateChartSize() {
@@ -41,7 +52,7 @@ export default class FlowEditor extends React.Component {
               this.chart = ref;
             }}
           >
-            <Process {...this.props.flowData} />
+            <Process node={this.state.flowData} onSelectNode={this.onSelectNode} />
           </g>
         </svg>
       </div>

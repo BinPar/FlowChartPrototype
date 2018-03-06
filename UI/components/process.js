@@ -13,12 +13,19 @@ class Process extends React.Component {
     };
     this.mouseHover = this.mouseHover.bind(this);
     this.mouseOut = this.mouseOut.bind(this);
+    this.click = this.click.bind(this);
     this.renderShape = this.renderShape.bind(this);
   }
 
   componentDidMount() {
-    if (this.label && this.props.focused) {
+    if (this.label && this.props.node.focused) {
       this.label.contentEditable = true;
+    }
+  }
+
+  componentDidUpdate() {
+    if (this.label) {
+      this.label.contentEditable = !!this.props.node.focused;
     }
   }
 
@@ -29,8 +36,13 @@ class Process extends React.Component {
   mouseOut() {
     this.setState({ hover: false });
   }
+
+  click() {
+    this.props.onSelectNode(this.props.node);
+  }
+
   renderShape() {
-    const { active, focused, last, first, condition, script } = this.props;
+    const { active, focused, last, first, condition, script } = this.props.node;
     let stroke = '#e2e2e2';
     if (active) {
       stroke = '#4a90e2';
@@ -104,7 +116,7 @@ class Process extends React.Component {
   }
 
   render() {
-    const { text, active, focused, child, options } = this.props;
+    const { text, active, focused, child, options, childRef } = this.props.node;
     const style = {};
     if (focused) {
       style.filter = 'url(#glow)';
@@ -114,9 +126,14 @@ class Process extends React.Component {
 
     return (
       <g>
-        <g pointerEvents="all" onMouseOver={this.mouseHover} onMouseOut={this.mouseOut}>
+        <g
+          pointerEvents="all"
+          onMouseOver={this.mouseHover}
+          onMouseOut={this.mouseOut}
+          onClick={this.click}
+        >
           {this.renderShape()}
-          <foreignObject x="-90" y="5" width="180" height="40">
+          <foreignObject x="-74" y="5" width="150" height="40">
             <div className={`flowTitle${active ? ' active' : ''}${focused ? ' focused' : ''}`}>
               <div>
                 <p
@@ -134,27 +151,50 @@ class Process extends React.Component {
           ? [
             <path
               key="startPath"
-              strokeWidth={1}
+              strokeWidth={options.some(option => option.active) ? 2 : 1}
               stroke={options.some(option => option.active) ? '#4a90e2' : '#e2e2e2'}
               d="m 0 60 v 25"
             />,
-            getOptionsLines(options, margin, child && child.active),
+            options.some(option => option.active) ? (
+              <path
+                key="startPathAnim"
+                strokeWidth={2}
+                className="animated"
+                stroke="#fff"
+                d="m 0 60 v 25"
+              />
+            ) : null,
+            getOptionsLines(
+              options,
+              margin,
+              (child && child.active) || (childRef && childRef.active),
+              this.props.onSelectNode,
+            ),
           ]
           : null}
         {child
           ? [
             <g key="child" transform={`translate(0,${margin + 110})`}>
-              <Process {...child} />
+              <Process node={child} onSelectNode={this.props.onSelectNode} />
             </g>,
             <path
               key="path"
               fill={child.active ? '#4a90e2' : '#e2e2e2'}
-              strokeWidth={1}
+              strokeWidth={child.active ? 2 : 1}
               stroke={child.active ? '#4a90e2' : '#e2e2e2'}
               d={`m 0 ${margin + (options ? 85 : 60)} v ${
                 options ? 13 : 38
               } h 5 l -5 10 l -5 -10 h 5`}
             />,
+            child.active ? (
+              <path
+                key="pathActive"
+                strokeWidth={2}
+                className="animated"
+                stroke={'#fff'}
+                d={`m 0 ${margin + (options ? 85 : 60)} v ${options ? 13 : 37}`}
+              />
+            ) : null,
           ]
           : null}
       </g>
@@ -163,27 +203,13 @@ class Process extends React.Component {
 }
 
 Process.propTypes = {
-  text: PropTypes.string,
-  active: PropTypes.bool,
-  focused: PropTypes.bool,
-  last: PropTypes.bool,
-  first: PropTypes.bool,
-  condition: PropTypes.bool,
-  script: PropTypes.bool,
-  child: PropTypes.shape(),
-  options: PropTypes.arrayOf(PropTypes.shape()),
+  node: PropTypes.shape(),
+  onSelectNode: PropTypes.func,
 };
 
 Process.defaultProps = {
-  text: '',
-  active: false,
-  condition: false,
-  focused: false,
-  last: false,
-  script: false,
-  first: false,
-  child: null,
-  options: null,
+  node: null,
+  onSelectNode: () => {},
 };
 
 export default Process;

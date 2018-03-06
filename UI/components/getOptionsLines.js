@@ -4,7 +4,7 @@ import Process from './process';
 
 const { getMaxDepth, getMaxWidth } = flowChartTools;
 
-const getOptionsLines = (options, margin, childActive) => {
+const getOptionsLines = (options, margin, childActive, onSelectNode) => {
   let requiredWidth = 0;
   options.forEach((option, i) => {
     requiredWidth +=
@@ -12,6 +12,17 @@ const getOptionsLines = (options, margin, childActive) => {
         ? getMaxWidth(option, null) / 2
         : getMaxWidth(option, null);
   });
+
+  const click = (option) => {
+    const selOption = option;
+    if (option.child) {
+      onSelectNode(option.child);
+    } else if (option.childRef) {
+      onSelectNode(null);
+      selOption.active = true;
+      onSelectNode(option.childRef);
+    }
+  };
 
   const totalWidth = requiredWidth * 210;
   let currentX = totalWidth / -2;
@@ -44,35 +55,68 @@ const getOptionsLines = (options, margin, childActive) => {
           node: (
             <g key={option.text}>
               {option.active ? (
-                <path
-                  key="startPath"
-                  strokeWidth={1}
-                  stroke={'#4a90e2'}
-                  d={`m 0 85 h ${xPosition}`}
-                />
+                <g>
+                  <path
+                    key="startPath"
+                    strokeWidth={2}
+                    stroke={'#4a90e2'}
+                    d={`m 0 85 h ${xPosition}`}
+                  />
+                  <path
+                    key="startPathAim"
+                    strokeWidth={2}
+                    stroke={'#fff'}
+                    className="animated"
+                    d={`m 0 85 h ${xPosition}`}
+                  />
+                </g>
               ) : null}
               {option.child ? (
-                <path
-                  key="path"
-                  fill={option.active ? '#4a90e2' : '#e2e2e2'}
-                  strokeWidth={1}
-                  stroke={option.active ? '#4a90e2' : '#e2e2e2'}
-                  d={`m ${xPosition} 85 v 13 h 5 l -5 10 l -5 -10 h 5`}
-                />
+                <g>
+                  <path
+                    key="path"
+                    fill={option.active ? '#4a90e2' : '#e2e2e2'}
+                    strokeWidth={option.active ? 2 : 1}
+                    stroke={option.active ? '#4a90e2' : '#e2e2e2'}
+                    d={`m ${xPosition} 85 v 13 h 5 l -5 10 l -5 -10 h 5`}
+                  />
+                  {option.active ? (
+                    <path
+                      key="pathActive"
+                      strokeWidth={2}
+                      className="animated"
+                      stroke={'#fff'}
+                      d={`m ${xPosition} 85 v 12`}
+                    />
+                  ) : null}
+                </g>
               ) : (
-                <path
-                  key="path"
-                  fill="none"
-                  strokeWidth={1}
-                  stroke={option.active ? '#4a90e2' : '#e2e2e2'}
-                  d={`m ${xPosition} 85 v ${margin} h ${xPosition * -1}`}
-                />
+                <g>
+                  <path
+                    key="path"
+                    fill="none"
+                    strokeWidth={option.active ? 2 : 1}
+                    stroke={option.active ? '#4a90e2' : '#e2e2e2'}
+                    d={`m ${xPosition} 85 v ${margin}`}
+                  />
+                  {option.active ? (
+                    <path
+                      key="pathAnim"
+                      fill="none"
+                      strokeWidth="2"
+                      className="animated"
+                      stroke="#fff"
+                      d={`m ${xPosition} 85 v ${margin}`}
+                    />
+                  ) : null}
+                </g>
               )}
               <foreignObject
                 x={xPosition === 0 ? 0 : xPosition - 80}
                 y="48"
                 width={xPosition === 0 ? 80 : 160}
                 height="40"
+                onClick={() => click(option)}
               >
                 <div className={`flowTitle${option.active ? ' active' : ''}`}>
                   <div>
@@ -84,29 +128,41 @@ const getOptionsLines = (options, margin, childActive) => {
                 cx={xPosition}
                 cy="85"
                 r="5"
+                onClick={() => click(option)}
                 stroke={option.active ? '#4a90e2' : '#e2e2e2'}
                 strokeWidth="1"
                 fill="#ffffff"
               />
               {option.child ? (
-                <path
-                  fill="none"
-                  strokeWidth={1}
-                  stroke={childActive ? '#4a90e2' : '#e2e2e2'}
-                  d={`m ${xPosition} ${verticalEnd} v ${subMargin} h ${xPosition * -1}`}
-                />
+                <g>
+                  <path
+                    fill="none"
+                    strokeWidth={(childActive && option.active) ? 2 : 1}
+                    stroke={childActive && option.active ? '#4a90e2' : '#e2e2e2'}
+                    d={`m ${xPosition} ${verticalEnd} v ${subMargin} h ${xPosition * -1}`}
+                  />
+                  {(childActive && option.active) ? (
+                    <path
+                      fill="none"
+                      strokeWidth="2"
+                      stroke="#fff"
+                      className="animated"
+                      d={`m ${xPosition} ${verticalEnd} v ${subMargin} h ${xPosition * -1}`}
+                    />
+                  ) : null}
+                </g>
               ) : null}
               {option.active ? <circle cx={xPosition} cy="85" r="2" fill="#4a90e2" /> : null}
               {option.child ? (
                 <g key="child" transform={`translate(${xPosition},110)`}>
-                  <Process {...option.child} />
+                  <Process node={option.child} onSelectNode={onSelectNode} />
                 </g>
               ) : null}
             </g>
           ),
         };
       })
-      .sort((a, b) => (a.x < b.x ? 1 : -1))
+      .sort((a, b) => (a.x > b.x ? 1 : -1))
       .map(x => x.node),
   ];
 };
