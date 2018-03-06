@@ -13,11 +13,12 @@ class Process extends React.Component {
     };
     this.mouseHover = this.mouseHover.bind(this);
     this.mouseOut = this.mouseOut.bind(this);
+    this.click = this.click.bind(this);
     this.renderShape = this.renderShape.bind(this);
   }
 
   componentDidMount() {
-    if (this.label && this.props.focused) {
+    if (this.label && this.props.node.focused) {
       this.label.contentEditable = true;
     }
   }
@@ -29,8 +30,13 @@ class Process extends React.Component {
   mouseOut() {
     this.setState({ hover: false });
   }
+
+  click() {
+    this.props.onSelectNode(this.props.node);
+  }
+
   renderShape() {
-    const { active, focused, last, first, condition, script } = this.props;
+    const { active, focused, last, first, condition, script } = this.props.node;
     let stroke = '#e2e2e2';
     if (active) {
       stroke = '#4a90e2';
@@ -104,7 +110,7 @@ class Process extends React.Component {
   }
 
   render() {
-    const { text, active, focused, child, options } = this.props;
+    const { text, active, focused, child, options } = this.props.node;
     const style = {};
     if (focused) {
       style.filter = 'url(#glow)';
@@ -114,7 +120,7 @@ class Process extends React.Component {
 
     return (
       <g>
-        <g pointerEvents="all" onMouseOver={this.mouseHover} onMouseOut={this.mouseOut}>
+        <g pointerEvents="all" onMouseOver={this.mouseHover} onMouseOut={this.mouseOut} onClick={this.click}>
           {this.renderShape()}
           <foreignObject x="-90" y="5" width="180" height="40">
             <div className={`flowTitle${active ? ' active' : ''}${focused ? ' focused' : ''}`}>
@@ -138,13 +144,13 @@ class Process extends React.Component {
               stroke={options.some(option => option.active) ? '#4a90e2' : '#e2e2e2'}
               d="m 0 60 v 25"
             />,
-            getOptionsLines(options, margin, child && child.active),
+            getOptionsLines(options, margin, child && child.active, this.props.onSelectNode),
           ]
           : null}
         {child
           ? [
             <g key="child" transform={`translate(0,${margin + 110})`}>
-              <Process {...child} />
+              <Process node={child} onSelectNode={this.props.onSelectNode} />
             </g>,
             <path
               key="path"
@@ -163,27 +169,13 @@ class Process extends React.Component {
 }
 
 Process.propTypes = {
-  text: PropTypes.string,
-  active: PropTypes.bool,
-  focused: PropTypes.bool,
-  last: PropTypes.bool,
-  first: PropTypes.bool,
-  condition: PropTypes.bool,
-  script: PropTypes.bool,
-  child: PropTypes.shape(),
-  options: PropTypes.arrayOf(PropTypes.shape()),
+  node: PropTypes.shape(),
+  onSelectNode: PropTypes.func,
 };
 
 Process.defaultProps = {
-  text: '',
-  active: false,
-  condition: false,
-  focused: false,
-  last: false,
-  script: false,
-  first: false,
-  child: null,
-  options: null,
+  node: null,
+  onSelectNode: () => {},
 };
 
 export default Process;

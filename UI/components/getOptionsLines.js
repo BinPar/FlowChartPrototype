@@ -4,7 +4,7 @@ import Process from './process';
 
 const { getMaxDepth, getMaxWidth } = flowChartTools;
 
-const getOptionsLines = (options, margin, childActive) => {
+const getOptionsLines = (options, margin, childActive, onSelectNode) => {
   let requiredWidth = 0;
   options.forEach((option, i) => {
     requiredWidth +=
@@ -12,6 +12,12 @@ const getOptionsLines = (options, margin, childActive) => {
         ? getMaxWidth(option, null) / 2
         : getMaxWidth(option, null);
   });
+
+  const click = (option) => {
+    if (option.child) {
+      onSelectNode(option.child);
+    }
+  };
 
   const totalWidth = requiredWidth * 210;
   let currentX = totalWidth / -2;
@@ -73,6 +79,7 @@ const getOptionsLines = (options, margin, childActive) => {
                 y="48"
                 width={xPosition === 0 ? 80 : 160}
                 height="40"
+                onClick={() => click(option)}
               >
                 <div className={`flowTitle${option.active ? ' active' : ''}`}>
                   <div>
@@ -84,6 +91,7 @@ const getOptionsLines = (options, margin, childActive) => {
                 cx={xPosition}
                 cy="85"
                 r="5"
+                onClick={() => click(option)}
                 stroke={option.active ? '#4a90e2' : '#e2e2e2'}
                 strokeWidth="1"
                 fill="#ffffff"
@@ -99,7 +107,7 @@ const getOptionsLines = (options, margin, childActive) => {
               {option.active ? <circle cx={xPosition} cy="85" r="2" fill="#4a90e2" /> : null}
               {option.child ? (
                 <g key="child" transform={`translate(${xPosition},110)`}>
-                  <Process {...option.child} />
+                  <Process node={option.child} onSelectNode={onSelectNode} />
                 </g>
               ) : null}
             </g>
