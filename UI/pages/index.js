@@ -5,11 +5,13 @@ import FlowEditor from '../components/flowEditor';
 const flowData = {
   text: 'Texto de introducción',
   active: true,
+  first: true,
   child: {
     text: 'Información básica',
     active: true,
     child: {
       text: '¿Le interesa el producto?',
+      condition: true,
       active: true,
       options: [
         {
@@ -25,6 +27,7 @@ const flowData = {
                 text: 'Datos de la casa',
                 child: {
                   text: 'Tipo de vivienda',
+                  condition: true,
                   options: [
                     {
                       text: 'Propiedad',
@@ -54,6 +57,7 @@ const flowData = {
           text: 'No',
           child: {
             text: '¿Puede que te interese mas adelante?',
+            condition: true,
             options: [
               {
                 text: 'Sí',
