@@ -31,7 +31,6 @@ const getOptionsLines = (options, margin, childActive) => {
         const delta = i === 0 ? 0 : 105;
         currentX += getMaxWidth(option.child, option.options) * delta;
         const xPosition = currentX;
-        
         currentX += getMaxWidth(option.child, option.options) * 105;
 
         let verticalEnd = margin - subMargin;

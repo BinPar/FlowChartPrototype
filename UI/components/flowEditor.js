@@ -1,94 +1,6 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Process from './process';
-
-const testData = {
-  text: 'Texto de introducción',
-  active: true,
-  child: {
-    text: 'Información básica',
-    active: true,
-    child: {
-      text: '¿Le interesa el producto?',
-      active: true,
-      options: [
-        {
-          text: 'Sí',
-          active: true,
-          child: {
-            text: 'Información adicional',
-            active: true,
-            focused: true,
-            child: {
-              text: 'Datos de la familia',
-              child: {
-                text: 'Datos de la casa',
-                child: {
-                  text: 'Tipo de vivienda',
-                  options: [
-                    {
-                      text: 'Propiedad',
-                      child: {
-                        text: 'Información adicional sobre la propiedad',
-                      },
-                    },
-                    {
-                      text: 'Alquiler',
-                      child: {
-                        text: 'Información sobre el alquiler',
-                        child: {
-                          text: 'Opción de compra',
-                        },
-                      },
-                    },
-                    {
-                      text: 'Sin vivienda propia',
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        },
-        {
-          text: 'No',
-          child: {
-            text: '¿Puede que te interese mas adelante?',
-            options: [
-              {
-                text: 'Sí',
-                child: {
-                  text: 'Información adicional',
-                },
-              },
-              {
-                text: 'No',
-                child: {
-                  text: 'Información adicional',
-                },
-              },
-            ],
-          },
-        },
-        {
-          text: 'Lo tiene',
-          child: {
-            text: 'Es una pena',
-            child: {
-              text: 'Cross selling',
-              child: {
-                text: 'Up selling',
-              },
-            },
-          },
-        },
-      ],
-      child: {
-        text: 'Despedida',
-        last: true,
-      },
-    },
-  },
-};
 
 export default class FlowEditor extends React.Component {
   constructor(props) {
@@ -120,10 +32,27 @@ export default class FlowEditor extends React.Component {
               this.chart = ref;
             }}
           >
-            <Process {...testData} />
+            <Process {...this.props.flowData} />
           </g>
         </svg>
       </div>
     );
   }
 }
+
+FlowEditor.propTypes = {
+  flowData: PropTypes.shape(),
+};
+
+FlowEditor.defaultProps = {
+  flowData: {
+    text: 'Texto de introducción',
+    active: true,
+    child: {
+      child: {
+        text: 'Despedida',
+        last: true,
+      },
+    },
+  },
+};
