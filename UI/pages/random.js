@@ -4,10 +4,10 @@ import faker from 'faker/locale/es';
 import Router from 'next/router';
 import FlowEditor from '../components/flowEditor';
 
-
 const flowData = {
   text: 'Texto de introducción',
   active: true,
+  focused: true,
   first: true,
   child: {
     text: 'Despedida',
@@ -19,7 +19,7 @@ let generateRandomChild = () => null;
 
 const generateRandomCondition = (child, depth) => {
   const res = {
-    text: faker.lorem.sentence(),
+    text: `¿${faker.lorem.words()}?`,
     condition: true,
     child,
   };
@@ -40,7 +40,7 @@ const generateRandomCondition = (child, depth) => {
 
 const generateRandomNode = (child, depth) => {
   const res = {
-    text: faker.lorem.sentence(),
+    text: faker.lorem.words(),
     script: faker.random.number(10) > 8,
     child,
   };
@@ -67,7 +67,9 @@ generateRandomChild = (node, depth) => {
 };
 
 const random = () => {
+  let pageNum = 0;
   if (process.browser) {
+    pageNum = Number.parseInt(Router.query.id, 10) || 0;
     faker.seed(Number.parseInt(Router.query.id, 10) || 0);
     generateRandomChild(flowData, 1);
   }
@@ -83,6 +85,16 @@ const random = () => {
         <link rel="stylesheet" type="text/css" href="/static/main.css" />
       </Head>
       {process.browser ? <FlowEditor flowData={flowData} /> : null}
+      {process.browser ? (
+        <a style={{ position: 'fixed', right: 10 }} className="linkBtn" href={`/random?id=${pageNum + 1}`}>
+          next &gt;
+        </a>
+      ) : null}
+      {process.browser ? (
+        <a style={{ position: 'fixed', left: 10 }} className="linkBtn" href={`/random?id=${pageNum - 1}`}>
+          &lt; prev
+        </a>
+      ) : null}
     </div>
   );
 };
