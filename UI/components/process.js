@@ -23,6 +23,12 @@ class Process extends React.Component {
     }
   }
 
+  componentDidUpdate() {
+    if (this.label) {
+      this.label.contentEditable = !!this.props.node.focused;
+    }
+  }
+
   mouseHover() {
     this.setState({ hover: true });
   }
@@ -110,7 +116,7 @@ class Process extends React.Component {
   }
 
   render() {
-    const { text, active, focused, child, options } = this.props.node;
+    const { text, active, focused, child, options, childRef } = this.props.node;
     const style = {};
     if (focused) {
       style.filter = 'url(#glow)';
@@ -120,9 +126,14 @@ class Process extends React.Component {
 
     return (
       <g>
-        <g pointerEvents="all" onMouseOver={this.mouseHover} onMouseOut={this.mouseOut} onClick={this.click}>
+        <g
+          pointerEvents="all"
+          onMouseOver={this.mouseHover}
+          onMouseOut={this.mouseOut}
+          onClick={this.click}
+        >
           {this.renderShape()}
-          <foreignObject x="-90" y="5" width="180" height="40">
+          <foreignObject x="-74" y="5" width="150" height="40">
             <div className={`flowTitle${active ? ' active' : ''}${focused ? ' focused' : ''}`}>
               <div>
                 <p
@@ -144,7 +155,12 @@ class Process extends React.Component {
               stroke={options.some(option => option.active) ? '#4a90e2' : '#e2e2e2'}
               d="m 0 60 v 25"
             />,
-            getOptionsLines(options, margin, child && child.active, this.props.onSelectNode),
+            getOptionsLines(
+              options,
+              margin,
+              (child && child.active) || (childRef && childRef.active),
+              this.props.onSelectNode,
+            ),
           ]
           : null}
         {child

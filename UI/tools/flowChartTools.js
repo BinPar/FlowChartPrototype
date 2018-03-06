@@ -26,7 +26,7 @@ const getMaxWidth = (child, options) => {
   if (child) {
     total += getMaxWidth(child.child, child.options) - 1;
   }
-  return total;
+  return total === 3 ? 1 : total;
 };
 
 const getAllLeavesFromNode = (node, list, first = false) => {
@@ -46,6 +46,12 @@ const getAllLeavesFromNode = (node, list, first = false) => {
   return list;
 };
 
+const findRecursiveParentChild = (node) => {
+  if (node.options && node.child) {
+    return node.child;
+  }
+  return findRecursiveParentChild(node.parents[0]);
+};
 const recalculateParentNodes = (flowData, parents) => {
   const node = flowData;
   node.parents = parents ? [...parents] : [];
@@ -55,6 +61,10 @@ const recalculateParentNodes = (flowData, parents) => {
       newOption.parents = [node];
       if (newOption.child) {
         newOption.child = recalculateParentNodes(newOption.child, [newOption]);
+      } else if (node.child) {
+        newOption.childRef = node.child;
+      } else {
+        newOption.childRef = findRecursiveParentChild(node);
       }
       return newOption;
     });

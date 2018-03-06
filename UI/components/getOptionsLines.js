@@ -14,8 +14,13 @@ const getOptionsLines = (options, margin, childActive, onSelectNode) => {
   });
 
   const click = (option) => {
+    const selOption = option;
     if (option.child) {
       onSelectNode(option.child);
+    } else if (option.childRef) {
+      onSelectNode(null);
+      selOption.active = true;
+      onSelectNode(option.childRef);
     }
   };
 
@@ -100,7 +105,7 @@ const getOptionsLines = (options, margin, childActive, onSelectNode) => {
                 <path
                   fill="none"
                   strokeWidth={1}
-                  stroke={childActive ? '#4a90e2' : '#e2e2e2'}
+                  stroke={childActive && option.active ? '#4a90e2' : '#e2e2e2'}
                   d={`m ${xPosition} ${verticalEnd} v ${subMargin} h ${xPosition * -1}`}
                 />
               ) : null}
