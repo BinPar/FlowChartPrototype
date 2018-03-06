@@ -55,29 +55,61 @@ const getOptionsLines = (options, margin, childActive, onSelectNode) => {
           node: (
             <g key={option.text}>
               {option.active ? (
-                <path
-                  key="startPath"
-                  strokeWidth={1}
-                  stroke={'#4a90e2'}
-                  d={`m 0 85 h ${xPosition}`}
-                />
+                <g>
+                  <path
+                    key="startPath"
+                    strokeWidth={2}
+                    stroke={'#4a90e2'}
+                    d={`m 0 85 h ${xPosition}`}
+                  />
+                  <path
+                    key="startPathAim"
+                    strokeWidth={2}
+                    stroke={'#fff'}
+                    className="animated"
+                    d={`m 0 85 h ${xPosition}`}
+                  />
+                </g>
               ) : null}
               {option.child ? (
-                <path
-                  key="path"
-                  fill={option.active ? '#4a90e2' : '#e2e2e2'}
-                  strokeWidth={1}
-                  stroke={option.active ? '#4a90e2' : '#e2e2e2'}
-                  d={`m ${xPosition} 85 v 13 h 5 l -5 10 l -5 -10 h 5`}
-                />
+                <g>
+                  <path
+                    key="path"
+                    fill={option.active ? '#4a90e2' : '#e2e2e2'}
+                    strokeWidth={option.active ? 2 : 1}
+                    stroke={option.active ? '#4a90e2' : '#e2e2e2'}
+                    d={`m ${xPosition} 85 v 13 h 5 l -5 10 l -5 -10 h 5`}
+                  />
+                  {option.active ? (
+                    <path
+                      key="pathActive"
+                      strokeWidth={2}
+                      className="animated"
+                      stroke={'#fff'}
+                      d={`m ${xPosition} 85 v 12`}
+                    />
+                  ) : null}
+                </g>
               ) : (
-                <path
-                  key="path"
-                  fill="none"
-                  strokeWidth={1}
-                  stroke={option.active ? '#4a90e2' : '#e2e2e2'}
-                  d={`m ${xPosition} 85 v ${margin} h ${xPosition * -1}`}
-                />
+                <g>
+                  <path
+                    key="path"
+                    fill="none"
+                    strokeWidth={option.active ? 2 : 1}
+                    stroke={option.active ? '#4a90e2' : '#e2e2e2'}
+                    d={`m ${xPosition} 85 v ${margin}`}
+                  />
+                  {option.active ? (
+                    <path
+                      key="pathAnim"
+                      fill="none"
+                      strokeWidth="2"
+                      className="animated"
+                      stroke="#fff"
+                      d={`m ${xPosition} 85 v ${margin}`}
+                    />
+                  ) : null}
+                </g>
               )}
               <foreignObject
                 x={xPosition === 0 ? 0 : xPosition - 80}
@@ -102,12 +134,23 @@ const getOptionsLines = (options, margin, childActive, onSelectNode) => {
                 fill="#ffffff"
               />
               {option.child ? (
-                <path
-                  fill="none"
-                  strokeWidth={1}
-                  stroke={childActive && option.active ? '#4a90e2' : '#e2e2e2'}
-                  d={`m ${xPosition} ${verticalEnd} v ${subMargin} h ${xPosition * -1}`}
-                />
+                <g>
+                  <path
+                    fill="none"
+                    strokeWidth={(childActive && option.active) ? 2 : 1}
+                    stroke={childActive && option.active ? '#4a90e2' : '#e2e2e2'}
+                    d={`m ${xPosition} ${verticalEnd} v ${subMargin} h ${xPosition * -1}`}
+                  />
+                  {(childActive && option.active) ? (
+                    <path
+                      fill="none"
+                      strokeWidth="2"
+                      stroke="#fff"
+                      className="animated"
+                      d={`m ${xPosition} ${verticalEnd} v ${subMargin} h ${xPosition * -1}`}
+                    />
+                  ) : null}
+                </g>
               ) : null}
               {option.active ? <circle cx={xPosition} cy="85" r="2" fill="#4a90e2" /> : null}
               {option.child ? (
@@ -119,7 +162,7 @@ const getOptionsLines = (options, margin, childActive, onSelectNode) => {
           ),
         };
       })
-      .sort((a, b) => (a.x < b.x ? 1 : -1))
+      .sort((a, b) => (a.x > b.x ? 1 : -1))
       .map(x => x.node),
   ];
 };

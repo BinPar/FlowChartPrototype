@@ -151,10 +151,19 @@ class Process extends React.Component {
           ? [
             <path
               key="startPath"
-              strokeWidth={1}
+              strokeWidth={options.some(option => option.active) ? 2 : 1}
               stroke={options.some(option => option.active) ? '#4a90e2' : '#e2e2e2'}
               d="m 0 60 v 25"
             />,
+            options.some(option => option.active) ? (
+              <path
+                key="startPathAnim"
+                strokeWidth={2}
+                className="animated"
+                stroke="#fff"
+                d="m 0 60 v 25"
+              />
+            ) : null,
             getOptionsLines(
               options,
               margin,
@@ -171,12 +180,21 @@ class Process extends React.Component {
             <path
               key="path"
               fill={child.active ? '#4a90e2' : '#e2e2e2'}
-              strokeWidth={1}
+              strokeWidth={child.active ? 2 : 1}
               stroke={child.active ? '#4a90e2' : '#e2e2e2'}
               d={`m 0 ${margin + (options ? 85 : 60)} v ${
                 options ? 13 : 38
               } h 5 l -5 10 l -5 -10 h 5`}
             />,
+            child.active ? (
+              <path
+                key="pathActive"
+                strokeWidth={2}
+                className="animated"
+                stroke={'#fff'}
+                d={`m 0 ${margin + (options ? 85 : 60)} v ${options ? 13 : 37}`}
+              />
+            ) : null,
           ]
           : null}
       </g>

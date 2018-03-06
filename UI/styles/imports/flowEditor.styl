@@ -1,9 +1,21 @@
+@keyframes moveStroke
+  to
+    stroke-dashoffset -150
+
 .flowEditor
   position absolute
   top 0
   bottom 0
   left 0
   right 0
+  svg
+    path
+      transition-property fill, stroke
+      transition-duration 300ms
+      transition-timing-function ease-in-out
+    .animated
+      stroke-dasharray 3
+      animation moveStroke 5s infinite linear
 .flowTitle
   font-size 12px
   color #4A4A4A
