@@ -79,9 +79,10 @@ const flowData = {
           child: {
             text: 'Es una pena',
             child: {
-              text: 'Cross selling',
+              text: 'Invocación API Cross Selling',
+              script: true,
               child: {
-                text: 'Up selling',
+                text: 'Up Selling',
               },
             },
           },
