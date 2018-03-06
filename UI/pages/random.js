@@ -1,8 +1,9 @@
 import React from 'react';
 import Head from 'next/head';
 import faker from 'faker/locale/es';
-import FlowEditor from '../components/flowEditor';
 import Router from 'next/router';
+import FlowEditor from '../components/flowEditor';
+
 
 const flowData = {
   text: 'Texto de introducción',
