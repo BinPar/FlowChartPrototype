@@ -45,7 +45,7 @@ const generateRandomNode = (child, depth) => {
     child,
   };
 
-  if (faker.random.number(10) < 10 / depth) {
+  if (faker.random.number(10) < 10 / (depth / 2)) {
     return generateRandomChild(res, depth + 1);
   }
 

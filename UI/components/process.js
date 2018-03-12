@@ -10,28 +10,37 @@ class Process extends React.Component {
     super(props);
     this.state = {
       hover: false,
-      childsX : 0,
+      childX: 0,
     };
     this.mouseHover = this.mouseHover.bind(this);
     this.mouseOut = this.mouseOut.bind(this);
     this.click = this.click.bind(this);
     this.renderShape = this.renderShape.bind(this);
+    this.recalcPosition = this.recalcPosition.bind(this);
   }
 
   componentDidMount() {
-    if (this.label && this.props.node.focused) {
-      this.label.contentEditable = true;
-    }
-    if(this.childElements) {
-      const rec = this.childElements.getBBox();
-      const childsX = rec.width / -2 - rec.x;
-      this.setState({childsX})
-    }
+    this.recalcPosition();
   }
 
   componentDidUpdate() {
+    this.recalcPosition();
     if (this.label) {
       this.label.contentEditable = !!this.props.node.focused;
+    }
+  }
+
+  recalcPosition() {
+    if (this.label && this.props.node.focused) {
+      this.label.contentEditable = true;
+    }
+    if (this.childElements) {
+      const rec = this.childElements.getBBox();
+      let childX = rec.width / -2;
+      childX -= rec.x;
+      if (childX !== this.state.childX) {
+        this.setState({ childX });
+      }
     }
   }
 
@@ -170,14 +179,18 @@ class Process extends React.Component {
                 d="m 0 60 v 25"
               />
             ) : null,
-            (<g ref={ref => this.childElements = ref} transform={`translate(${this.state.childsX},0)`}>{
-            getOptionsLines(
-              options,
-              margin,
-              (child && child.active) || (childRef && childRef.active),
-              this.props.onSelectNode,
-              this.state.childsX,
-            )}</g>),
+            <g
+              ref={ref => (this.childElements = ref)}
+              transform={`translate(${this.state.childX},0)`}
+            >
+              {getOptionsLines(
+                options,
+                margin,
+                (child && child.active) || (childRef && childRef.active),
+                this.props.onSelectNode,
+                this.state.childX,
+              )}
+            </g>,
           ]
           : null}
         {child
@@ -200,8 +213,7 @@ class Process extends React.Component {
                 strokeWidth={2}
                 className="animated"
                 stroke={'#fff'}
-                d={`m 0 ${margin + (options ? 65 : 60)} v ${
-                  options ? 33 : 38}`}
+                d={`m 0 ${margin + (options ? 65 : 60)} v ${options ? 33 : 38}`}
               />
             ) : null,
           ]

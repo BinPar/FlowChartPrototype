@@ -22,14 +22,14 @@ export default class FlowEditor extends React.Component {
     setTimeout(this.recalculateChartSize, 0);
   }
 
-  componentUpdate() {
-    setTimeout(this.recalculateChartSize, 0);
-  }
-
   onSelectNode(node) {
     this.setState({
       flowData: selectNode(this.state.flowData, node),
     });
+  }
+
+  componentUpdate() {
+    setTimeout(this.recalculateChartSize, 0);
   }
 
   recalculateChartSize() {
