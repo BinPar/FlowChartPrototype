@@ -10,6 +10,7 @@ class Process extends React.Component {
     super(props);
     this.state = {
       hover: false,
+      childsX : 0,
     };
     this.mouseHover = this.mouseHover.bind(this);
     this.mouseOut = this.mouseOut.bind(this);
@@ -20,6 +21,11 @@ class Process extends React.Component {
   componentDidMount() {
     if (this.label && this.props.node.focused) {
       this.label.contentEditable = true;
+    }
+    if(this.childElements) {
+      const rec = this.childElements.getBBox();
+      const childsX = rec.width / -2 - rec.x;
+      this.setState({childsX})
     }
   }
 
@@ -121,7 +127,7 @@ class Process extends React.Component {
     if (focused) {
       style.filter = 'url(#glow)';
     }
-    const maxDepth = getMaxDepth({ options });
+    const maxDepth = getMaxDepth({ options }) - 1;
     const margin = maxDepth * 110;
 
     return (
@@ -164,13 +170,14 @@ class Process extends React.Component {
                 d="m 0 60 v 25"
               />
             ) : null,
+            (<g ref={ref => this.childElements = ref} transform={`translate(${this.state.childsX},0)`}>{
             getOptionsLines(
               options,
               margin,
               (child && child.active) || (childRef && childRef.active),
               this.props.onSelectNode,
-              child,
-            ),
+              this.state.childsX,
+            )}</g>),
           ]
           : null}
         {child
@@ -183,8 +190,8 @@ class Process extends React.Component {
               fill={child.active ? '#4a90e2' : '#e2e2e2'}
               strokeWidth={child.active ? 2 : 1}
               stroke={child.active ? '#4a90e2' : '#e2e2e2'}
-              d={`m 0 ${margin + (options ? 85 : 60)} v ${
-                options ? 13 : 38
+              d={`m 0 ${margin + (options ? 65 : 60)} v ${
+                options ? 33 : 38
               } h 5 l -5 10 l -5 -10 h 5`}
             />,
             child.active ? (
@@ -193,7 +200,8 @@ class Process extends React.Component {
                 strokeWidth={2}
                 className="animated"
                 stroke={'#fff'}
-                d={`m 0 ${margin + (options ? 85 : 60)} v ${options ? 13 : 37}`}
+                d={`m 0 ${margin + (options ? 65 : 60)} v ${
+                  options ? 33 : 38}`}
               />
             ) : null,
           ]

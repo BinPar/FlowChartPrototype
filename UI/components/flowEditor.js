@@ -15,10 +15,15 @@ export default class FlowEditor extends React.Component {
     };
     global.flowData = recalculateParentNodes(this.props.flowData);
     this.onSelectNode = this.onSelectNode.bind(this);
+    this.recalculateChartSize = this.recalculateChartSize.bind(this);
   }
 
   componentDidMount() {
-    this.recalculateChartSize();
+    setTimeout(this.recalculateChartSize, 0);
+  }
+
+  componentUpdate() {
+    setTimeout(this.recalculateChartSize, 0);
   }
 
   onSelectNode(node) {

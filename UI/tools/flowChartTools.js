@@ -1,15 +1,15 @@
 const getMaxDepth = ({ child, options }) => {
-  let max = 0;
+  let max = 1;
   if (options) {
     options.forEach((option) => {
-      const newMax = Math.max(getMaxDepth(option), 1);
+      const newMax = Math.max(getMaxDepth(option), 1.25);
       if (newMax >= max) {
         max = newMax;
       }
     });
+    max += 0.25;
   }
   if (child) {
-    max += 1;
     max += getMaxDepth(child);
   }
   return max;
@@ -130,9 +130,18 @@ const selectNode = (flowData, node) => {
   return newFlow;
 };
 
+const endsWithChild = (option) => 
+{
+  if (option.child) {
+    return endsWithChild(option.child);
+  }
+  return !!option.options;  
+}
+
 export default {
   getMaxDepth,
   getMaxWidth,
   recalculateParentNodes,
   selectNode,
+  endsWithChild,
 };

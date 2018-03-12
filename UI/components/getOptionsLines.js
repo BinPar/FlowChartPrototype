@@ -2,13 +2,10 @@ import React from 'react';
 import flowChartTools from '../tools/flowChartTools';
 import Process from './process';
 
-const { getMaxDepth, getMaxWidth } = flowChartTools;
+const { getMaxDepth, getMaxWidth, endsWithChild } = flowChartTools;
 
-const getOptionsLines = (options, margin, childActive, onSelectNode, child) => {
-  let xMargin = margin;
-  if (child) {
-    xMargin += 20;
-  }
+const getOptionsLines = (options, margin, childActive, onSelectNode, childsX) => {
+  const xMargin = margin;
   let requiredWidth = 0;
   options.forEach((option, i) => {
     requiredWidth +=
@@ -39,12 +36,10 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, child) => {
     />,
     ...options
       .map((option, i) => {
-        const maxDepth = getMaxDepth({ child: option.child, options: option.options });
+        const maxDepth = getMaxDepth({ child: option.child, options: option.options }) - 1;
         let subMargin = margin;
         subMargin -= maxDepth * 110;
-        if (!option.child) {
-          subMargin += 25;
-        }
+        
         const delta = i === 0 ? 0 : 105;
         currentX += getMaxWidth(option.child, option.options) * delta;
         const xPosition = currentX;
@@ -53,10 +48,8 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, child) => {
         let verticalEnd = margin - subMargin;
         verticalEnd += 85;
 
-        if (!option.child) {
-          verticalEnd += 25;
-          subMargin -= 25;
-        }
+        const labelAlmostCenter = (xPosition + childsX) >= 0 &&(xPosition + childsX) < 80;
+        const labelAlmostCenterL = !labelAlmostCenter && (xPosition + childsX) < 0 &&(xPosition + childsX) > -80;
 
         return {
           x: Math.abs(xPosition),
@@ -68,14 +61,14 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, child) => {
                     key="startPath"
                     strokeWidth={2}
                     stroke={'#4a90e2'}
-                    d={`m 0 85 h ${xPosition}`}
+                    d={`m ${-childsX} 85 h ${xPosition + childsX}`}
                   />
                   <path
                     key="startPathAim"
                     strokeWidth={2}
                     stroke={'#fff'}
                     className="animated"
-                    d={`m 0 85 h ${xPosition}`}
+                    d={`m ${-childsX} 85 h ${xPosition + childsX}`}
                   />
                 </g>
               ) : null}
@@ -97,27 +90,6 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, child) => {
                       d={`m ${xPosition} 85 v 12`}
                     />
                   ) : null}
-                  {option.child && !option.child.options ? (
-                    <g>
-                      <path
-                        key="path"
-                        fill="none"
-                        strokeWidth={childActive && option.active ? 2 : 1}
-                        stroke={childActive && option.active ? '#4a90e2' : '#e2e2e2'}
-                        d={`m ${xPosition} 170 v 5 h ${-xPosition} v 20`}
-                      />
-                      {childActive && option.active ?(
-                        <path
-                          key="path"
-                          fill="none"
-                          strokeWidth="2"
-                          stroke="#fff"
-                          className="animated"
-                          d={`m ${xPosition} 170 v 5 h ${-xPosition} v 20`}
-                        />
-                      ) : null}
-                    </g>
-                  ) : null}
                 </g>
               ) : (
                 <g>
@@ -126,7 +98,7 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, child) => {
                     fill="none"
                     strokeWidth={option.active ? 2 : 1}
                     stroke={option.active ? '#4a90e2' : '#e2e2e2'}
-                    d={`m ${xPosition} 85 v ${xMargin - 20} h ${-xPosition} v 20`}
+                    d={`m ${xPosition} 85 v ${xMargin - 20} h ${-xPosition - childsX}`}
                   />
                   {option.active ? (
                     <path
@@ -135,40 +107,36 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, child) => {
                       strokeWidth="2"
                       className="animated"
                       stroke="#fff"
-                      d={`m ${xPosition} 85 v ${xMargin - 20} h ${-xPosition} v 20`}
+                      d={`m ${xPosition} 85 v ${xMargin - 20} h ${-xPosition - childsX} v 20`}
                     />
                   ) : null}
                 </g>
               )}
               <foreignObject
-                x={xPosition === 0 ? 0 : xPosition - 80}
+                x={ labelAlmostCenter  ? xPosition : xPosition - 80}
                 y="48"
-                width={xPosition === 0 ? 80 : 160}
+                width={labelAlmostCenter || labelAlmostCenterL ? 80 : 160}
                 height="40"
                 onClick={() => click(option)}
               >
                 <div className={`flowTitle${option.active ? ' active' : ''}`}>
                   <div>
-                    <p className={xPosition === 0 ? 'alignLeft' : ''}>{option.text}</p>
+                    <p className={labelAlmostCenter ? 'alignLeft' : (labelAlmostCenterL?'alignRight':'')}>{option.text}</p>
                   </div>
                 </div>
               </foreignObject>
-              <circle
-                cx={xPosition}
-                cy="85"
-                r="5"
-                onClick={() => click(option)}
-                stroke={option.active ? '#4a90e2' : '#e2e2e2'}
-                strokeWidth="1"
-                fill="#ffffff"
-              />
+              {option.child ? (
+                <g key="child" transform={`translate(${xPosition},110)`}>
+                  <Process node={option.child} onSelectNode={onSelectNode} />
+                </g>
+              ) : null}
               {option.child ? (
                 <g>
                   <path
                     fill="none"
                     strokeWidth={(childActive && option.active) ? 2 : 1}
                     stroke={childActive && option.active ? '#4a90e2' : '#e2e2e2'}
-                    d={`m ${xPosition} ${verticalEnd} v ${subMargin} h ${xPosition * -1}`}
+                    d={`m ${xPosition} ${verticalEnd - (endsWithChild(option) ? 20 : 25)} v ${subMargin + (endsWithChild(option) ? 0 : 5)} h ${(xPosition +childsX) * -1}`}
                   />
                   {(childActive && option.active) ? (
                     <path
@@ -176,23 +144,70 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, child) => {
                       strokeWidth="2"
                       stroke="#fff"
                       className="animated"
-                      d={`m ${xPosition} ${verticalEnd} v ${subMargin} h ${xPosition * -1}`}
+                      d={`m ${xPosition} ${verticalEnd - (endsWithChild(option) ? 20 : 25)} v ${subMargin + (endsWithChild(option) ? 0 : 5)} h ${(xPosition +childsX) * -1}`}
                     />
                   ) : null}
                 </g>
               ) : null}
-              {option.active ? <circle cx={xPosition} cy="85" r="2" fill="#4a90e2" /> : null}
-              {option.child ? (
-                <g key="child" transform={`translate(${xPosition},110)`}>
-                  <Process node={option.child} onSelectNode={onSelectNode} />
-                </g>
-              ) : null}
             </g>
           ),
+          subnode: (
+            <g key={option.text}>
+              {option.child && childActive && option.active? (
+                <g>
+                  <path
+                    fill="none"
+                    strokeWidth={(childActive && option.active) ? 2 : 1}
+                    stroke={childActive && option.active ? '#4a90e2' : '#e2e2e2'}
+                    d={`m ${xPosition} ${verticalEnd - (endsWithChild(option) ? 20 : 25)} v ${subMargin + (endsWithChild(option) ? 0 : 5)} h ${(xPosition +childsX) * -1}`}
+                  />
+                  <path
+                    fill="none"
+                    strokeWidth="2"
+                    stroke="#fff"
+                    className="animated"
+                    d={`m ${xPosition} ${verticalEnd - (endsWithChild(option) ? 20 : 25)} v ${subMargin + (endsWithChild(option) ? 0 : 5)} h ${(xPosition +childsX) * -1}`}
+                  />
+                </g>
+              ) : (
+                childActive && option.active ? (
+                  <g>
+                    <path
+                      key="path"
+                      fill="none"
+                      strokeWidth={option.active ? 2 : 1}
+                      stroke={option.active ? '#4a90e2' : '#e2e2e2'}
+                      d={`m ${xPosition} 85 v ${xMargin - 20} h ${-xPosition - childsX}`}
+                    />
+                    {option.active ? (
+                      <path
+                        key="pathAnim"
+                        fill="none"
+                        strokeWidth="2"
+                        className="animated"
+                        stroke="#fff"
+                        d={`m ${xPosition} 85 v ${xMargin - 20} h ${-xPosition - childsX} v 20`}
+                      />
+                    ) : null}
+                  </g>
+                ) : null
+              )}
+              <circle
+                cx={xPosition}
+                cy="85"
+                r="5"
+                onClick={() => click(option)}
+                stroke={option.active ? '#4a90e2' : '#e2e2e2'}
+                strokeWidth="1"
+                fill="#fff"
+              />
+              {option.active ? <circle cx={xPosition} cy="85" r="2" fill="#4a90e2" /> : null}
+            </g>
+          )
         };
       })
       .sort((a, b) => (a.x > b.x ? 1 : -1))
-      .map(x => x.node),
+      .reduce((t,x) => [[...t[0], x.node], [...t[1],x.subnode]], [[],[]]),
   ];
 };
 
