@@ -2,8 +2,8 @@ const getMaxDepth = ({ child, options }) => {
   let max = 0;
   if (options) {
     options.forEach((option) => {
-      const newMax = getMaxDepth(option);
-      if (newMax > max) {
+      const newMax = Math.max(getMaxDepth(option), 1);
+      if (newMax >= max) {
         max = newMax;
       }
     });

@@ -169,6 +169,7 @@ class Process extends React.Component {
               margin,
               (child && child.active) || (childRef && childRef.active),
               this.props.onSelectNode,
+              child,
             ),
           ]
           : null}

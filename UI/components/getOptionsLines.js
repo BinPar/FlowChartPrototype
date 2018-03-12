@@ -4,7 +4,11 @@ import Process from './process';
 
 const { getMaxDepth, getMaxWidth } = flowChartTools;
 
-const getOptionsLines = (options, margin, childActive, onSelectNode) => {
+const getOptionsLines = (options, margin, childActive, onSelectNode, child) => {
+  let xMargin = margin;
+  if (child) {
+    xMargin += 20;
+  }
   let requiredWidth = 0;
   options.forEach((option, i) => {
     requiredWidth +=
@@ -38,7 +42,9 @@ const getOptionsLines = (options, margin, childActive, onSelectNode) => {
         const maxDepth = getMaxDepth({ child: option.child, options: option.options });
         let subMargin = margin;
         subMargin -= maxDepth * 110;
-        subMargin += 25;
+        if (!option.child) {
+          subMargin += 25;
+        }
         const delta = i === 0 ? 0 : 105;
         currentX += getMaxWidth(option.child, option.options) * delta;
         const xPosition = currentX;
@@ -46,10 +52,12 @@ const getOptionsLines = (options, margin, childActive, onSelectNode) => {
 
         let verticalEnd = margin - subMargin;
         verticalEnd += 85;
-        if (option.child && option.child.options && !option.child.child) {
+
+        if (!option.child) {
           verticalEnd += 25;
           subMargin -= 25;
         }
+
         return {
           x: Math.abs(xPosition),
           node: (
@@ -89,6 +97,27 @@ const getOptionsLines = (options, margin, childActive, onSelectNode) => {
                       d={`m ${xPosition} 85 v 12`}
                     />
                   ) : null}
+                  {option.child && !option.child.options ? (
+                    <g>
+                      <path
+                        key="path"
+                        fill="none"
+                        strokeWidth={childActive && option.active ? 2 : 1}
+                        stroke={childActive && option.active ? '#4a90e2' : '#e2e2e2'}
+                        d={`m ${xPosition} 170 v 5 h ${-xPosition} v 20`}
+                      />
+                      {childActive && option.active ?(
+                        <path
+                          key="path"
+                          fill="none"
+                          strokeWidth="2"
+                          stroke="#fff"
+                          className="animated"
+                          d={`m ${xPosition} 170 v 5 h ${-xPosition} v 20`}
+                        />
+                      ) : null}
+                    </g>
+                  ) : null}
                 </g>
               ) : (
                 <g>
@@ -97,7 +126,7 @@ const getOptionsLines = (options, margin, childActive, onSelectNode) => {
                     fill="none"
                     strokeWidth={option.active ? 2 : 1}
                     stroke={option.active ? '#4a90e2' : '#e2e2e2'}
-                    d={`m ${xPosition} 85 v ${margin}`}
+                    d={`m ${xPosition} 85 v ${xMargin - 20} h ${-xPosition} v 20`}
                   />
                   {option.active ? (
                     <path
@@ -106,7 +135,7 @@ const getOptionsLines = (options, margin, childActive, onSelectNode) => {
                       strokeWidth="2"
                       className="animated"
                       stroke="#fff"
-                      d={`m ${xPosition} 85 v ${margin}`}
+                      d={`m ${xPosition} 85 v ${xMargin - 20} h ${-xPosition} v 20`}
                     />
                   ) : null}
                 </g>
