@@ -180,6 +180,7 @@ class Process extends React.Component {
               />
             ) : null,
             <g
+              key="optionLines"
               ref={ref => (this.childElements = ref)}
               transform={`translate(${this.state.childX},0)`}
             >
