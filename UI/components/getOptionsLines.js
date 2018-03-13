@@ -26,7 +26,7 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, childX) => 
   };
 
   const totalWidth = requiredWidth * 210;
-  
+
   let currentX = totalWidth / -2;
   return [
     <path
@@ -53,13 +53,16 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, childX) => 
         const labelAlmostCenterL =
           !labelAlmostCenter && xPosition + childX < 0 && xPosition + childX > -80;
 
+        let labelClassName = labelAlmostCenter ? 'alignLeft' : '';
+        if (labelAlmostCenterL && !labelClassName) {
+          labelClassName = 'alignRight';
+        }
+
         return {
           x: Math.abs(xPosition),
           node: (
             <g key={option.text}>
-              {option.active ? (
-                null
-              ) : (
+              {option.active ? null : (
                 <g key="optStartPath">
                   <path
                     strokeWidth={1}
@@ -67,11 +70,11 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, childX) => 
                     d={`m ${-childX} 85 h ${xPosition + childX}`}
                   />
                 </g>
-              ) 
-              }
+              )}
               {option.child ? (
                 <g>
-                  <path key="path"
+                  <path
+                    key="path"
                     fill={option.active ? '#4a90e2' : '#e2e2e2'}
                     strokeWidth={option.active ? 2 : 1}
                     stroke={option.active ? '#4a90e2' : '#e2e2e2'}
@@ -108,13 +111,7 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, childX) => 
               >
                 <div className={`flowTitle${option.active ? ' active' : ''}`}>
                   <div>
-                    <p
-                      className={
-                        labelAlmostCenter ? 'alignLeft' : labelAlmostCenterL ? 'alignRight' : ''
-                      }
-                    >
-                      {option.text}
-                    </p>
+                    <p className={labelClassName}>{option.text}</p>
                   </div>
                 </div>
               </foreignObject>
@@ -166,7 +163,7 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, childX) => 
                     d={`m ${-childX} 85 h ${xPosition + childX}`}
                   />
                 </g>
-              ):null}
+              ) : null}
               {option.child && childActive && option.active ? (
                 <g>
                   <path
@@ -187,25 +184,24 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, childX) => 
                       (endsWithChild(option) ? 0 : 5)} h ${(xPosition + childX) * -1}`}
                   />
                 </g>
-              ) : childActive && option.active ? (
+              ) : null}
+              {!option.child && childActive && option.active ? (
                 <g>
                   <path
                     key="path"
                     fill="none"
-                    strokeWidth={option.active ? 2 : 1}
-                    stroke={option.active ? '#4a90e2' : '#e2e2e2'}
+                    strokeWidth={1}
+                    stroke="#4a90e2"
                     d={`m ${xPosition} 85 v ${xMargin - 20} h ${-xPosition - childX}`}
                   />
-                  {option.active ? (
-                    <path
-                      key="pathAnim"
-                      fill="none"
-                      strokeWidth="2"
-                      className="animated"
-                      stroke="#fff"
-                      d={`m ${xPosition} 85 v ${xMargin - 20} h ${-xPosition - childX} v 20`}
-                    />
-                  ) : null}
+                  <path
+                    key="pathAnim"
+                    fill="none"
+                    strokeWidth="2"
+                    className="animated"
+                    stroke="#fff"
+                    d={`m ${xPosition} 85 v ${xMargin - 20} h ${-xPosition - childX} v 20`}
+                  />
                 </g>
               ) : null}
               <circle
@@ -224,8 +220,8 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, childX) => 
       })
       .sort((a, b) => (a.x > b.x ? 1 : -1))
       .reduce((t, x) => [[...t[0], x.node], [...t[1], x.subNode]], [[], []])
-      .reduce((t ,x) => [...t,...x],[])
-  ]
+      .reduce((t, x) => [...t, ...x], []),
+  ];
 };
 
 export default getOptionsLines;
