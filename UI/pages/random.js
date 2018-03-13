@@ -3,8 +3,9 @@ import Head from 'next/head';
 import faker from 'faker/locale/es';
 import Router from 'next/router';
 import FlowEditor from '../components/flowEditor';
+import Link from 'next/link';
 
-const flowData = {
+let flowData = {
   text: 'Texto de introducción',
   active: true,
   focused: true,
@@ -74,45 +75,73 @@ generateRandomChild = (node, depth) => {
   return newNode;
 };
 
-const random = () => {
-  let pageNum = 0;
-  if (process.browser) {
-    pageNum = Number.parseInt(Router.query.id, 10) || 0;
-    faker.seed(Number.parseInt(Router.query.id, 10) || 0);
-    generateRandomChild(flowData, 1);
+class Random extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      nodes: { ...flowData },
+      pageNum: 0,
+    };
   }
-  return (
-    <div>
-      <Head>
-        <title>Flow Chart Prototype</title>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
-        <link
-          href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&amp;subset=latin-ext"
-          rel="stylesheet"
-        />
-        <link rel="stylesheet" type="text/css" href="/static/main.css" />
-      </Head>
-      {process.browser ? <FlowEditor flowData={flowData} /> : null}
-      {process.browser ? (
-        <a
-          style={{ position: 'fixed', right: 10 }}
-          className="linkBtn"
-          href={`/random?id=${pageNum + 1}`}
-        >
-          next &gt;
-        </a>
-      ) : null}
-      {process.browser ? (
-        <a
-          style={{ position: 'fixed', left: 10 }}
-          className="linkBtn"
-          href={`/random?id=${pageNum - 1}`}
-        >
-          &lt; prev
-        </a>
-      ) : null}
-    </div>
-  );
-};
 
-export default random;
+  componentDidMount() {
+    this.calculateRandomData();
+  }
+
+  componentDidUpdate() {
+    const pageNum = Number.parseInt(Router.query.id, 10) || 0;
+    if (pageNum !== this.state.pageNum) {
+      this.calculateRandomData();
+    }
+  }
+
+  calculateRandomData() {
+    flowData = {
+      text: 'Texto de introducción',
+      active: true,
+      focused: true,
+      first: true,
+      child: {
+        text: 'Despedida',
+        last: true,
+      },
+    };
+    const pageNum = Number.parseInt(Router.query.id, 10) || 0;
+    faker.seed(pageNum);
+    generateRandomChild(flowData, 1);
+    this.setState({ nodes: { ...flowData }, pageNum });
+  }
+
+  render() {
+    return (
+      <div>
+        <Head>
+          <title>Flow Chart Prototype</title>
+          <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+          <link
+            href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&amp;subset=latin-ext"
+            rel="stylesheet"
+          />
+          <link rel="stylesheet" type="text/css" href="/static/main.css" />
+        </Head>
+        <FlowEditor flowData={this.state.nodes} />
+        <Link
+          href={`/random?id=${this.state.pageNum + 1}`}
+        >
+          <a style={{ position: 'fixed', right: 10 }} className="linkBtn">
+            next &gt;
+          </a>
+        </Link>
+        <Link
+          href={`/random?id=${this.state.pageNum - 1}`}
+        >
+          <a style={{ position: 'fixed', left: 10 }} className="linkBtn">
+            &lt; prev
+          </a>
+        </Link>
+      </div>
+    );
+  }
+}
+
+export default Random;
