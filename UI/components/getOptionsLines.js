@@ -60,9 +60,8 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, childX) => 
               {option.active ? (
                 null
               ) : (
-                <g>
+                <g key="optStartPath">
                   <path
-                    key="startPath"
                     strokeWidth={1}
                     stroke={'#e2e2e2'}
                     d={`m ${-childX} 85 h ${xPosition + childX}`}
@@ -72,8 +71,7 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, childX) => 
               }
               {option.child ? (
                 <g>
-                  <path
-                    key="path"
+                  <path key="path"
                     fill={option.active ? '#4a90e2' : '#e2e2e2'}
                     strokeWidth={option.active ? 2 : 1}
                     stroke={option.active ? '#4a90e2' : '#e2e2e2'}
@@ -98,22 +96,13 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, childX) => 
                     stroke={option.active ? '#4a90e2' : '#e2e2e2'}
                     d={`m ${xPosition} 85 v ${xMargin - 20} h ${-xPosition - childX}`}
                   />
-                  {option.active ? (
-                    <path
-                      key="pathAnim"
-                      fill="none"
-                      strokeWidth="2"
-                      className="animated"
-                      stroke="#fff"
-                      d={`m ${xPosition} 85 v ${xMargin - 20} h ${-xPosition - childX} v 20`}
-                    />
-                  ) : null}
                 </g>
               )}
               <foreignObject
+                key="path"
                 x={labelAlmostCenter ? xPosition : xPosition - 80}
                 y="48"
-                width={labelAlmostCenter || labelAlmostCenterL ? 80 : 160}
+                width={labelAlmostCenter || labelAlmostCenterL ? 80 : 210}
                 height="40"
                 onClick={() => click(option)}
               >
@@ -159,8 +148,8 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, childX) => 
               ) : null}
             </g>
           ),
-          subnode: (
-            <g key={option.text}>
+          subNode: (
+            <g key={`${option.text}_end`}>
               {option.active ? (
                 <g>
                   <path
@@ -234,8 +223,9 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, childX) => 
         };
       })
       .sort((a, b) => (a.x > b.x ? 1 : -1))
-      .reduce((t, x) => [[...t[0], x.node], [...t[1], x.subnode]], [[], []]),
-  ];
+      .reduce((t, x) => [[...t[0], x.node], [...t[1], x.subNode]], [[], []])
+      .reduce((t ,x) => [...t,...x],[])
+  ]
 };
 
 export default getOptionsLines;

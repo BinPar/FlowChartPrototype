@@ -26,14 +26,22 @@ const generateRandomCondition = (child, depth) => {
 
   const values = new Array(5).fill(0).map(() => Math.round(faker.random.number(10)));
   const numOptions = 2 + Math.min(...values);
-  res.options = new Array(numOptions).fill(0).map(() =>
-    generateRandomChild(
+  const previousWords = [];
+
+  res.options = new Array(numOptions).fill(0).map(() => {
+    let word = null;
+
+    while (!word || previousWords.indexOf(word) !== -1) {
+      word = faker.lorem.word();
+    }
+    previousWords.push(word);
+    return generateRandomChild(
       {
-        text: faker.lorem.word(),
+        text: word,
       },
       depth + 1,
-    ),
-  );
+    );
+  });
 
   return res;
 };
@@ -86,12 +94,20 @@ const random = () => {
       </Head>
       {process.browser ? <FlowEditor flowData={flowData} /> : null}
       {process.browser ? (
-        <a style={{ position: 'fixed', right: 10 }} className="linkBtn" href={`/random?id=${pageNum + 1}`}>
+        <a
+          style={{ position: 'fixed', right: 10 }}
+          className="linkBtn"
+          href={`/random?id=${pageNum + 1}`}
+        >
           next &gt;
         </a>
       ) : null}
       {process.browser ? (
-        <a style={{ position: 'fixed', left: 10 }} className="linkBtn" href={`/random?id=${pageNum - 1}`}>
+        <a
+          style={{ position: 'fixed', left: 10 }}
+          className="linkBtn"
+          href={`/random?id=${pageNum - 1}`}
+        >
           &lt; prev
         </a>
       ) : null}
