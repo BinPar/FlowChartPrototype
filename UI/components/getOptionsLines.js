@@ -100,7 +100,7 @@ const getOptionsLines = (options, margin, childActive, onSelectNode, childX) => 
               )}
               <foreignObject
                 key="path"
-                x={labelAlmostCenter ? xPosition : xPosition - 80}
+                x={labelAlmostCenter ? xPosition : xPosition - 105}
                 y="48"
                 width={labelAlmostCenter || labelAlmostCenterL ? 80 : 210}
                 height="40"
