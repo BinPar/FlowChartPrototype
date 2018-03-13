@@ -1,9 +1,21 @@
+@keyframes moveStroke
+  to
+    stroke-dashoffset -150
+
 .flowEditor
   position absolute
   top 0
   bottom 0
   left 0
   right 0
+  svg
+    path
+      transition-property fill, stroke
+      transition-duration 300ms
+      transition-timing-function ease-in-out
+    .animated
+      stroke-dasharray 3
+      animation moveStroke 5s infinite linear
 .flowTitle
   font-size 12px
   color #4A4A4A
@@ -18,22 +30,46 @@
     display table-cell
     vertical-align middle
     width 100%
-    max-width 180px
+    max-width 100%
     p
       display block
       max-height 42px
-      text-overflow ellipsis
+      cursor default
       overflow hidden
-      max-width 180px
+      max-width 100%
+      font-weight 300
+      line-height 1.2em
+      padding: 4px
       &.alignLeft
         text-align left
         padding-left 5px
+      &.alignRight
+        text-align right
+        padding-right 5px
+        
   &.active
     >div
       p
-        color #4a90e2
+        color #18304A
   &.focused
     >div
       p
         color #fff
-        font-weight 300
+        cursor text
+
+.linkBtn
+  display block
+  width 60px
+  height 20px
+  text-align center
+  background-color white
+  text-decoration none
+  text-transform uppercase
+  line-height 1.66em
+  border-radius 10px
+  color #999
+  top 10px
+  border solid 1px #999
+  &:hover
+    border solid 1px #99f
+    color #99f
